@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+    <script type="text/javascript"   src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<style>
+	table{
+		width:200px;
+		height:200px;
+	}
+	table td{
+		padding:10px;
+		margin:10px;
+		border:1px solid #ccc;
+	}
+</style>
+<script>
+  function createTable() {
+    $('#generated').remove();
+    mytable = $('<table></table>').attr({ id: "generated" });
+    var rows = new Number($("#rows").val());
+    var cols = new Number($("#cols").val());
+    var tr = [];
+    for (var i = 0; i < rows; i++) {
+      var row = $('<tr></tr>').attr({ class: ["class1", "class2", "class3"].join(' ') }).appendTo(mytable);
+      for (var j = 0; j < cols; j++) {
+        $('<td></td>').text("Row:" + i + ", Col: " + j).appendTo(row);
+      }
+
+    }
+    console.log("TTTTT:" + mytable.html());
+    mytable.appendTo("#wrapper");
+
+  }
+</script>
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Activity 3: Forms &amp; click event</title>
+</head>
+
+<body>
+  <h1>Activity 3: Forms &amp; click event</h1>
+  <p>Add a form with two fields ("Rows" and "Columns") and a button ("Generate Table"). When the button is clicked it have to:</p>
+  <ol>
+    <li>remove a table#generated if exists </li>
+    <li>Add a table with as many rows and conlumns both Rows and Columns fields indicate</li>
+    <li>Each table cell must contain a text like: "Row: X, Col: Y"</li>
+  </ol>
+  <img src="./default.png" alt="just an image">
+  <form name="tablegen">
+    <label>Rows:
+      <input type="number" name="rows" id="rows" />
+    </label>
+    <br />
+    <label>Columns:
+      <input type="number" name="cols" id="cols" />
+    </label>
+    <br />
+    <input name="generate" type="button" value="Generate Table" onclick="createTable();" />
+  </form>
+  <div id="wrapper"></div>
+</body>
+
+</html>

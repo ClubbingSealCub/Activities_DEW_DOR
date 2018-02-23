@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <title></title>
+</head>
+
+<style>
+    #board {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background-color: grey;
+        height: 100%;
+        width: 100%;
+        z-index: -2;
+    }
+
+    #noteLauncher {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 1px;
+        background-color: black;
+        height: 100px;
+        width: 100%;
+    }
+
+    #noteReceiver {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        z-index: 0px;
+        height: 100px;
+        width: 100%;
+        overflow: hidden;
+        background-color: grey;
+        z-index: 0;
+    }
+
+    #scoreArea {
+        position: fixed;
+        top: 100px;
+        right: 0%;
+        background-color: purple;
+        width: 20%;
+        height: 100%;
+    }
+
+
+    .launcher {
+        position: relative;
+        height: 100px;
+        float: left;
+        width: 4%;
+        margin-left: 8%;
+        margin-right: 8%;
+        background-color: darkgoldenrod;
+        z-index: 2;
+    }
+
+    .goal {
+        position: relative;
+        height: 100px;
+        float: left;
+        width: 20%;
+        z-index: 0;
+    }
+
+    #red {
+        background-color: red;
+    }
+
+    #blue {
+        background-color: blue;
+    }
+
+    #green {
+        background-color: green;
+    }
+
+    #yellow {
+        background-color: yellow;
+    }
+
+    #timeTracker {
+        font-size: large;
+        text-align: center;
+    }
+
+    #scoreTracker {
+        font-size: large;
+        text-align: center;
+    }
+
+    .note {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        background-image:url('red_note.png');
+        -webkit-animation-duration: 20s;
+        -webkit-animation-name: hovernote;
+        z-index: 2;
+    }
+
+    @-webkit-keyframes hovernote {
+        0% {
+            top: 0px;
+        }
+        25% {
+            top: 800px;
+        }
+        50% {
+            top: 800px;
+        }
+        75% {
+            top: 800px;
+        }
+        100% {
+            top: 800px;
+        }
+    }
+
+    @keyframes hovernote {
+        0% {
+            top: 0px;
+        }
+        25% {
+            top: 800px;
+        }
+        50% {
+            top: 800px;
+        }
+        75% {
+            top: 800%px;
+        }
+        100% {
+            top: 800%px;
+        }
+
+    }
+</style>
+
+<body>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <div id="board">
+        <!-- Note Spawner -->
+        <div id="noteLauncher">
+            <div id="redLauncher" class="launcher"></div>
+            <div id="blueLauncher" class="launcher"></div>
+            <div id="greenLauncher" class="launcher"></div>
+            <div id="yellowLauncher" class="launcher"></div>
+        </div>
+
+        <!-- Score Area -->
+        <div id="scoreArea">
+            <div id="timeTracker"></div>
+            <div id="scoreTracker"></div>
+        </div>
+
+        <!-- Music -->
+        <audio id="music" preload="auto">
+            <source src="run_to_the_hills.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Success Audio Sources -->
+        <audio id="successred">
+            <source id="successredSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="successblue">
+            <source id="successblueSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="successgreen">
+            <source id="successgreenSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="successyellow">
+            <source id="successyellowSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Fail Audio Sources -->
+        <audio id="soundredFail">
+            <source id="soundredFailSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="soundblueFail">
+            <source id="soundblueFailSource" src="fail2.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="soundgreenFail">
+            <source id="soundgreenFailSource" src="fail3.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="soundyellowFail">
+            <source id="soundyellowFailSource" src="fail1.mp3" type="audio/mpeg">
+        </audio>
+
+
+        <!-- Note Receivers -->
+        <div id="noteReceiver">
+            <div id="red" class="goal">
+            </div>
+
+            <div id="blue" class="goal">
+            </div>
+
+            <div id="green" class="goal">
+            </div>
+
+            <div id="yellow" class="goal">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+
+    var redLauncher = document.getElementById("redLauncher");
+    var blueLauncher = document.getElementById("blueLauncher");
+    var greenLauncher = document.getElementById("greenLauncher");
+    var yellowLauncher = document.getElementById("yellowLauncher");
+
+    var track = {
+        2: { red: "pretty_good.mp3" },
+        5: { yellow: true },
+        7: { blue: true },
+        10: { red: true, green: "di_molto.mp3" }
+    };
+    var timeTracker = document.getElementById("timeTracker");
+    var totalSeconds = 0;
+
+    var scoreTracker = document.getElementById("scoreTracker");
+    var score = 0;
+
+    function cycleFunction() {
+        ++totalSeconds;
+        timeTracker.innerHTML = pad(totalSeconds);
+        generateLine(track[totalSeconds], totalSeconds);
+    }
+
+    function scoreUpdate(amount) {
+        score += amount;
+        scoreTracker.innerHTML = "SCORE: " + score;
+    }
+
+    function generateLine(line, id) {
+        if (!line) {
+            return;
+        }
+        if (line.red) {
+            var redid = "red" + id;
+            $("#redLauncher").append("<div class=\"note rednote\" id=\"" + redid + "\" data-sound=" + line.red + "></div>");
+            setTimeout(function () {
+                $("#" + redid).remove();
+            }, 3000);
+            console.log(line.red);
+        }
+        if (line.blue) {
+            var blueid = "blue" + id;
+            $("#blueLauncher").append("<div class=\"note bluenote\" id=\"" + blueid + "\" data-sound=" + line.blue + "></div>");
+            setTimeout(function () {
+                $("#" + blueid).remove();
+            }, 3000);
+            console.log(line.blue);
+        }
+        if (line.green) {
+            var greenid = "green" + id;
+            $("#greenLauncher").append("<div class=\"note greennote\" id=\"" + greenid + "\"data-sound=" + line.green + "></div>");
+            setTimeout(function () {
+                $("#" + greenid).remove();
+            }, 3000);
+            console.log(line.green);
+        }
+        if (line.yellow) {
+            var yellowid = "yellow" + id;
+            $("#yellowLauncher").append("<div class=\"note yellownote\" id=\"" + yellowid + "\"data-sound=" + line.yellow + "></div>");
+            setTimeout(function () {
+                $("#" + yellowid).remove();
+            }, 3000);
+            console.log(line.yellow);
+        }
+    }
+
+
+
+    function playSuccessSource(audioName, sound) {
+        var audioElement = document.getElementById(audioName);
+        var sourceElement = document.getElementById(audioName + "Source");
+        sourceElement.src = sound;
+        audioElement.load();
+        audioElement.play();
+    }
+
+    function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+    }
+
+
+    $(document).ready(function () {
+        var music = $('#music');
+        music[0].volume = .50;
+        music[0].play();
+        setInterval(cycleFunction, 1000);
+    });
+
+    $(document).keydown(function (e) {
+        var fail1 = $('#soundredFail');
+        var fail2 = $('#soundblueFail');
+        var fail3 = $('#soundgreenFail');
+        var fail4 = $('#soundyellowFail');
+
+        if (e.keyCode == 81) { // Q
+            if ($(".rednote").length == 0) {
+                fail1[0].play();
+                scoreUpdate(-5);
+            } else {
+                var $redNote = $(".rednote");
+                console.log($redNote.position().top);
+                if ($redNote.position().top > 531) {
+                    if ($redNote.attr('data-sound') != "true") {
+                        playSuccessSource("successred", $redNote.attr('data-sound'));
+                    }
+                    $redNote.remove();
+                    scoreUpdate(10);
+                } else {
+                    fail1[0].play();
+                    scoreUpdate(-10);
+                }
+            }
+        }
+        else if (e.keyCode == 87) { // W
+            if ($(".bluenote").length == 0) {
+                fail2[0].play();
+                scoreUpdate(-5);
+            } else {
+                var $blueNote = $(".bluenote");
+                console.log($blueNote.position().top);
+                if ($blueNote.position().top > 531) {
+                    if ($blueNote.attr('data-sound') != "true") {
+                        playSuccessSource("successblue", $blueNote.attr('data-sound'));
+                    }
+                    $blueNote.remove();
+                    scoreUpdate(+10);
+                } else {
+                    fail2[0].play();
+                    scoreUpdate(-10);
+                }
+            }
+        }
+
+        else if (e.keyCode == 69) { // E
+            if ($(".greennote").length == 0) {
+                fail3[0].play();
+                scoreUpdate(-5);
+            } else {
+                var $greenNote = $(".greennote");
+                console.log($greenNote.position().top);
+                if ($greenNote.position().top > 531) {
+                    if ($greenNote.attr('data-sound') != "true") {
+                        playSuccessSource("successgreen", $greenNote.attr('data-sound'));
+                    }
+                    $greenNote.remove();
+                    scoreUpdate(10);
+                } else {
+                    fail3[0].play();
+                    scoreUpdate(-10);
+                }
+            }
+        }
+
+        else if (e.keyCode == 82) { //R
+            if ($(".yellownote").length == 0) {
+                fail4[0].play();
+                scoreUpdate(-5);
+            } else {
+                var $yellowNote = $(".yellownote");
+                console.log($yellowNote.position().top);
+                if ($yellowNote.position().top > 531) {
+                    if ($yellowNote.attr('data-sound') != "true") {
+                        playSuccessSource("successyellow", $yellowNote.attr('data-sound'));
+                    }
+                    $yellowNote.remove();
+                    scoreUpdate(10);
+                } else {
+                    fail4[0].play();
+                    scoreUpdate(-10);
+                }
+            }
+        }
+
+    });
+
+</script>

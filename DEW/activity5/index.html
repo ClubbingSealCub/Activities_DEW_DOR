@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Activity 5: the audio tag + events</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    .controls div {
+      float: left;
+      margin: 10px;
+      border: 3px solid #000;
+      font-size: 2em;
+      text-align: center;
+      width: 50px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Activity 5: the audio tag + events</h1>
+  <p>This is a music player with a playlist</p>
+  <ul>
+    <li>Add a play icon to the item in the playlist that is currently playing.</li>
+    <li>Add controls to
+      <a href="https://developer.mozilla.org/es/docs/Web/HTML/Elemento/audio">audio tag</a>: play/pause, go back, go forward.</li>
+    <li>When 1 audio ends the following one must estart playing automatically</li>
+  </ul>
+
+
+  <ul id="playlist">
+    <li class="active">
+      <a href="music1.mp3">Tu Hamster</a>
+    </li>
+    <li class="active">
+      <a href="music2.mp3">Cien Idiotas</a>
+    </li>
+    <li class="active">
+      <a href="music3.mp3">Vomito</a>
+    </li>
+  </ul>
+
+  <audio id="audio" preload="auto" controls>
+    <source src="music1.mp3" type="audio/mpeg"> Your browser does not support the audio tag.
+  </audio>
+  <div class="controls">
+    <div class="play" onclick="playAudio()">
+      <i class="fa fa-play"></i>
+    </div>
+    <div class="backward" onclick="playPrevious()">
+      <i class="fa fa-step-backward"></i>
+    </div>
+    <div class="forward" onclick="playNext()">
+      <i class="fa fa-step-forward"></i>
+    </div>
+  </div>
+  <script>
+
+    var music = document.getElementById('audio');
+    var current = 0;
+    var audio = $('#audio');
+    var playlist = $('#playlist');
+    var tracks = playlist.find('li a');
+    var len = tracks.length -1;
+
+    function playAudio() {
+      if (music.paused) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    function playNext() {
+      current++;
+      if (current == len + 1) {
+        current = 0;
+        link = playlist.find('a')[0];
+      } else {
+        link = playlist.find('a')[current];
+      }
+      run($(link), audio[0]);
+    }
+
+    function playPrevious() {
+      current--;
+      if (current == -1) {
+        current = len;
+        link = playlist.find('a')[len];
+      } else {
+        link = playlist.find('a')[current];
+      }
+      run($(link), audio[0]);
+    }
+    function run(link, player) {
+        player.src = link.attr('href');
+        par = link.parent();
+        par.addClass('active').siblings().removeClass('active');
+        player.load();
+        player.play();
+      }
+
+    $(document).ready(function () {
+      init();
+      function init() {
+        current = 0;
+        var audio = $('#audio');
+        var playlist = $('#playlist');
+        var tracks = playlist.find('li a');
+        var len = tracks.length - 1;
+        audio[0].volume = .10;
+        audio[0].play();
+        playlist.on('click', 'a', function (e) {
+          e.preventDefault();
+          link = $(this);
+          current = link.parent().index();
+          run(link, audio[0]);
+        });
+        audio[0].addEventListener('ended', function (e) {
+          current++;
+          if (current >= len) {
+            current = 0;
+            link = playlist.find('a')[0];
+          } else {
+            link = playlist.find('a')[current];
+          }
+          run($(link), audio[0]);
+        });
+      }
+    });
+
+
+
+  </script>
+
+</body>
+
+</html>

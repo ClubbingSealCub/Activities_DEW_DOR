@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css">
+
+<head>
+
+    <title></title>
+</head>
+
+<body>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <div id="board">
+        <div id="container"></div>
+        <div id="paddlecontainer"></div>
+    </div>
+</body>
+
+</html>
+<style>
+    #board {
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        width: auto;
+    }
+
+    #container {
+        position: absolute;
+        background-color: palegoldenrod;
+        height: 75%;
+        width: 80%;
+        top: 10%;
+        left: 10%;
+    }
+
+    #paddlecontainer {
+        position: absolute;
+        height: 5%;
+        width: 80%;
+        top: 80%;
+        left: 10%;
+        background-color: grey;
+    }
+
+    #paddle {
+        position: absolute;
+        left: 42.5%;
+    }
+
+    .paddle {
+        height: 85%;
+        width: 15%;
+        background: orangered;
+        border: black 2px solid;
+        box-sizing: border-box;
+        margin: 0px;
+        padding: 0px;
+        border-radius: 25px;
+    }
+
+    .ball {
+        height: 5%;
+        width: 3.5%;
+        background: black;
+        position: absolute;
+        top: 88.2%;
+        left: 48.25%;
+    }
+
+    .unit[data-life="1"] {
+        background: blue;
+        border: black 1px solid;
+    }
+
+    .unit[data-life="2"] {
+        background: green;
+        border: black 1px solid;
+    }
+
+    .unit[data-life="3"] {
+        background: yellow;
+        border: black 1px solid;
+    }
+
+    .unit[data-life="4"] {
+        background: red;
+        border: black 1px solid;
+    }
+
+    .unit[data-life="0"] {
+        background: palegoldenrod;
+        border: 0px;
+
+    }
+
+    .unit {
+        box-sizing: border-box;
+        border: black 1px solid;
+        height: 4%;
+        width: 10%;
+        margin: 0px;
+        padding: 0px;
+        display: inline-block;
+    }
+</style>
+<script>
+    
+    function cycleFunction() {
+        if($ball.css("top") <= '0'){
+            $ball.css("top", 1);
+            console.log("CAMBIO Y1!");
+            console.log($ball.css("top"));
+            $ball.attr('data-directionY', 1);
+        }
+
+
+        if($ball.css("bottom") <= '0') {
+            clearInterval(interval);
+            interval = 0;
+            alert("Game Over!");
+        }
+        
+        /*if ($ball.css("bottom") <= '32') {
+            if($ball.css("left") >= $paddle.css("left") && $ball.css("right") <= $paddle.css("right")) {
+                console.log("CAMBIO PALA!");
+                console.log("PALAL: "+$paddle.css("left")+" PALAR: "+$paddle.css("right")+" PALATOP: "+$paddle.css("top"));
+                console.log("BOLAL: "+$ball.css("left")+" BOLAR: "+$ball.css("right")+ " BOLABOT: "+$ball.css("bottom"));
+                console.log("BOLATOP: "+$ball.css("top"));
+                $ball.attr('data-directionY', -1);
+                clearInterval(interval);
+                interval = 0;
+            }
+        }*/
+
+        if($ball.css("left")<= '0') {
+            console.log("CAMBIO X1!");
+            console.log($ball.css("left"));
+            console.log($ball.css("right"));
+            $ball.attr('data-directionX', 1);
+        }
+
+        if($ball.css("right")<='0') {
+            console.log("CAMBIO X2!");
+            console.log($ball.css("left"));
+            console.log($ball.css("right"));
+            $ball.attr('data-directionX', -1);
+        } 
+
+        if($ball.attr('data-directionY')==-1) {
+            $ball.css("top", ($ball.position().top - 1 + "px"));
+        } else {
+            $ball.css("top", ($ball.position().top + 1 + "px"));
+
+        }
+        if($ball.attr('data-directionX')==1) {
+            $ball.css("left", ($ball.position().left + 1 + "px"));
+        } else {
+            $ball.css("left", ($ball.position().left - 1 + "px"));
+        }
+
+        if($ball.css("bottom") < '33' ) {
+            console.log("CAMBIO PALA!");
+            console.log("PALAL: "+$paddle.css("left")+" PALAR: "+$paddle.css("right")+" PALATOP: "+$paddle.css("top"));
+            console.log("PALABOT: "+$paddle.css("bottom"));
+            console.log("BOLAL: "+$ball.css("left")+" BOLAR: "+$ball.css("right")+ " BOLABOT: "+$ball.css("bottom"));
+            console.log("BOLATOP: "+$ball.css("top"));
+            clearInterval(interval);
+            interval = 0;
+        }
+    }
+
+    var stage = [
+        [{ life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) },],
+        [{ life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) },],
+        [{ life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) }, { life: Math.floor((Math.random() * (4)) + 1) },]
+    ]
+    var counterx = 0;
+    var countery = 0;   
+    stage.forEach(element => {
+        element.forEach(element2 => {
+            console.log(element2);
+            $('div#container').append('<div class="unit" data-life="' + element2.life + '" id="' + countery + '_' + counterx + '">');
+            counterx++;
+        })
+        countery++;
+        counterx = 0;
+    })
+    $('div#paddlecontainer').append('<div class="paddle" id="paddle">');
+    $('div#container').append('<div class="ball" id="ball" data-directionX="-1" data-directionY="-1">');
+    var $ball = $(document.getElementById('ball'));
+    var $paddle = $(document.getElementById('paddle'));
+    $(document).keydown(function (e) {
+        if (e.keyCode == 39) {
+            $paddle.css("left", ($paddle.position().left + 10) + "px");
+        }
+        else if (e.keyCode == 37) {
+            $paddle.css("left", ($paddle.position().left - 10) + "px");
+        }
+    });
+    var leftBorder = $('div#container').position().left;
+    var rightBorder = leftBorder + $('div#container').width();
+    var topBorder = $('div#container').position().top;
+    var bottomBorder = topBorder + $('div#container').height();
+    console.log(leftBorder);
+    console.log(rightBorder);
+    console.log(topBorder);
+    console.log(bottomBorder);
+    console.log("BOLA BOT:"+$ball.css("bottom"));
+    var interval = setInterval(cycleFunction, 10);
+    
+    
+</script>
